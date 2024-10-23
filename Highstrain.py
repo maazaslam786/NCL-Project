@@ -51,6 +51,9 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
+import numpy as np
+import plotly.graph_objs as go
+from plotly.subplots import make_subplots
 # Load your cleaned data
 data_cleaned = pd.read_csv('combined_data.csv')
 
@@ -122,3 +125,6 @@ if not high_rpm_timeframes.empty:
     print(high_rpm_timeframes)
 else:
     print("No periods found with engine RPM above 4000.")
+
+
+
