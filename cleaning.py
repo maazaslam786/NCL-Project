@@ -27,8 +27,6 @@ df[df['engine_rpm']==0] = df[df['engine_rpm']==0].fillna(0) #when engine is turn
 print('Data after filling the engine off readings')
 # df.info()
 
-df.loc[(df['mass_air_flow_rate']!=0)&(df['mass_air_flow_rate']<2),'mass_air_flow_rate'] = df[df['mass_air_flow_rate']>2]['mass_air_flow_rate'].mean() #converting maf to realistic values
-
 df.fillna(df[df!=0].mean(),inplace=True) #replacing null values with mean value
 
 print('\nCleaned Data:')
