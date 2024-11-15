@@ -10,14 +10,15 @@ def generate_interval(data):
     data['time_stamp'] = intervals
     return data
 
-df = pd.read_csv('car_data_bulk (1).csv',index_col=0, low_memory=False)
+df = pd.read_csv('car_data_bulk.csv', low_memory=False)
+df.set_index('bulk_id')
 
 df = df.loc[df['car_reg_no'] == 113]
 
 df = df.dropna(axis=1, how='all') #dropping the columns which contains all null values
 
-# #repeated columns which one to keep?
-# print(df['o_s1_b1_fuel_air_equivalence_ratio'].describe())
+# # #repeated columns which one to keep?
+# # print(df['o_s1_b1_fuel_air_equivalence_ratio'].describe())
 # print(df['o_s1_b1_fuelair_equivalence_ratio'].describe()) #contains all zeros so removing it
 
 df = df.drop('o_s1_b1_fuelair_equivalence_ratio',axis=1)
@@ -36,10 +37,21 @@ df[df['engine_rpm']==0] = df[df['engine_rpm']==0].fillna(0) #when engine is turn
 # print('Data after filling the engine off readings')
 # print(df.isna().sum())
 
-df_seg1 = df.iloc[0:85782].copy()
-df_seg2 = df.iloc[85782:].copy()
+#707198 break point
+#950133   break point
+# print(len(df))
+# print(df.iloc[950133])
+df_seg1 = df.iloc[0:707198].copy()
+df_seg2 = df.iloc[707198:950133].copy()
+df_seg3 = df.iloc[950133:].copy()
+
+
+# print('Segment 1: ',df_seg1['time_stamp'].unique())
+# print('Segment 2: ',df_seg2['time_stamp'].unique())
+# print('Segment 3: ',df_seg3['time_stamp'].unique())
 
 df_seg1['time_stamp'] = pd.to_datetime(df_seg1['time_stamp'])
+df_seg3['time_stamp'] = pd.to_datetime(df_seg3['time_stamp'])
 
 
 df_seg2 = df_seg2.groupby('time_stamp').apply(generate_interval)
@@ -47,7 +59,7 @@ df_seg2 = df_seg2.reset_index(level = 'time_stamp', drop=True)
 # print(df_seg2.head())
 
 
-df = pd.concat([df_seg1,df_seg2])
+df = pd.concat([df_seg1,df_seg2,df_seg3])
 df['latitude'] = df['latitude'].fillna(0).astype('float')
 df['longitude'] = df['longitude'].fillna(0).astype('float')
 
@@ -73,9 +85,10 @@ df.fillna(df[df!=0].mean(),inplace=True) #replacing null values with mean value
 # print(df['catalyst_temperature_b1_s1'].unique()) #all zeros
 # print(df['catalyst_temperature_b1_s2'].unique()) #all zeros
 
-#dropping the columns
+# #dropping the columns
 df = df.drop(['o_s1_current','catalyst_temperature_b1_s1','catalyst_temperature_b1_s2'], axis=1)
 
-print('\nCleaned Data:')
-print(df.isna().sum())
-df.to_csv('cleaned_bulk_data.csv')
+# print('\nCleaned Data:')
+# print(df.isna().sum())
+print(len(df))
+# df.to_csv('cleaned_bulk_data.csv')
