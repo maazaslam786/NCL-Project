@@ -104,4 +104,16 @@ df = df[(df['time_stamp'] >= start) & (df['time_stamp']<=end)]
 print(df['time_stamp'].iloc[0])
 print(df['time_stamp'].iloc[-1])
 print(len(df))
+
+duplicate = {}
+for column in df.columns:
+    duplicate[column] = df[column].duplicated()
+
+duplicate = pd.DataFrame(duplicate)
+print('No. of duplicate values in each column')
+print(duplicate.sum())
+
+#deleting duplicated time stamp values
+df = df.drop_duplicates(subset=['time_stamp'])
+print('No. of rows after deleting duplicate entries',len(df))
 df.to_csv('cleaned_data_2021.csv')
